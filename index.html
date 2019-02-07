@@ -13,19 +13,17 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
 <script type="text/babel">
     const rootElement = document.getElementById("root");
-    function Message ({message}){
-        return (
-            <div>{
-                message
-                    ?  <div>{message}</div>
-                       : <div>Ups! Nothing</div>
-            }</div>
-        )
+    function tick() {
+        const time = new Date().toLocaleTimeString();
+        const element = <div>It is <input type="text" value={time} />
+            <input type="text" value={time} />
+            rn</div>;
+
+        ReactDOM.render(
+            element
+            , rootElement);
     }
-
-    ReactDOM.render(
-        <Message message={null} />
-        , rootElement);
-
+tick();
+    setInterval(tick, 1000)
 </script>
 </html>
