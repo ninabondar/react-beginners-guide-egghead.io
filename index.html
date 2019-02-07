@@ -12,42 +12,57 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
 <style>
-    .box {
-        height: 120px;
-        width: 120px;
-        border: bisque solid 3px;
-    }
 
-    .box--small {
-        width: 40px;
-        height: 50px;
-        border: #ff745f dotted 2px;
-    }
 </style>
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
+    const state = {eventCount: 0,
+                    username: 'Bu'};
 
-    function Box({style, size, className=' ', ...rest}) {
-        const sizeClass = size ? `box--${size}` : '';
+    function increment(e) {
+        console.debug(e.nativeEvent);
+        setState({eventCount: state.eventCount + 1,});
+    }
+
+    function updateUsername(event) {
+        console.debug(event.nativeEvent);
+        setState({username: event.target.value,});
+    }
+
+    function App(){
         return (
-                <div className={`${sizeClass} box`}
-                     style={{paddingLeft: 20, ...style}} {...rest}
-                />
-        )
-    };
-    const element = (
-        <div>
-            <Box size="small"
-               style={{backgroundColor: 'blue'}}>small box</Box>
-            <Box
-                className="box" style={{backgroundColor: 'orange'}}>big box</Box>
-        </div>
-    );
+            <div>
+                <p>
+                    There have been {state.eventCount} events
+                </p>
+                <p>
+                    <button onClick={
+                       increment
+                    } >👽</button>
+                </p>
 
-    ReactDOM.render(
-        element
-        , rootElement);
+                <span>
+                    you typed: {state.username}
+                </span>
+                <input onChange={updateUsername} type="text" />
+            </div>
+        )
+    }
+
+    setState({eventCount: 0, username: 'Biba'});
+
+    function setState(newState) {
+        Object.assign(state, newState);
+        renderApp();
+    }
+
+    function renderApp() {
+        ReactDOM.render(
+            <App />
+            , rootElement);
+    }
+
 
 
 </script>
