@@ -11,19 +11,44 @@
 <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+<style>
+    .box {
+        height: 120px;
+        width: 120px;
+        border: bisque solid 3px;
+    }
+
+    .box--small {
+        width: 40px;
+        height: 50px;
+        border: #ff745f dotted 2px;
+    }
+</style>
 <script type="text/babel">
     const rootElement = document.getElementById("root");
-    function tick() {
-        const time = new Date().toLocaleTimeString();
-        const element = <div>It is <input type="text" value={time} />
-            <input type="text" value={time} />
-            rn</div>;
 
-        ReactDOM.render(
-            element
-            , rootElement);
-    }
-tick();
-    setInterval(tick, 1000)
+
+    function Box({style, size, className=' ', ...rest}) {
+        const sizeClass = size ? `box--${size}` : '';
+        return (
+                <div className={`${sizeClass} box`}
+                     style={{paddingLeft: 20, ...style}} {...rest}
+                />
+        )
+    };
+    const element = (
+        <div>
+            <Box size="small"
+               style={{backgroundColor: 'blue'}}>small box</Box>
+            <Box
+                className="box" style={{backgroundColor: 'orange'}}>big box</Box>
+        </div>
+    );
+
+    ReactDOM.render(
+        element
+        , rootElement);
+
+
 </script>
 </html>
