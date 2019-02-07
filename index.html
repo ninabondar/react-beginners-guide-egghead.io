@@ -17,51 +17,71 @@
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    const state = {eventCount: 0,
-                    username: 'Bu'};
+    class StopWatch extends React.Component{
 
-    function increment(e) {
-        console.debug(e.nativeEvent);
-        setState({eventCount: state.eventCount + 1,});
+        state = {
+            lapse: 0,
+            running: false
+        };
+
+         handleRunClick = (e) => {
+            this.setState( state => {
+                if(state.running) {
+                    clearInterval(this.interval)
+                } else {
+                    const startTime =  Date.now() - this.state.lapse;
+                    this.interval = setInterval(() => {
+                        this.setState({
+                            lapse:  Date.now() - startTime,
+                        })})
+                }
+
+                return {running: !state.running}
+            });
+
+
+        };
+        clearClick = (e) => {
+            clearInterval(this.interval);
+            this.setState({
+                lapse: 0,
+                running: false
+            })
+        };
+
+        render() {
+            const btnStyles = {
+                background: '#90c564',
+                color: 'white',
+                display: 'block',
+                outline: 'none',
+                width: 70,
+                height: 24
+            };
+            const labelStyles = {
+                fontWeight: '600',
+                fontSize: 24,
+                fontFamily: 'sans-serif'
+            };
+
+            const {lapse, running} = this.state;
+
+            return (
+                <div>
+                    <label style={labelStyles}>{lapse} ms</label>
+                    <button onClick={this.handleRunClick} style={btnStyles}>{running ? 'stop' : 'start'}</button>
+                    <button onClick={this.clearClick} style={btnStyles}>Clear</button>
+                </div>
+            )
+        }
+
     }
 
-    function updateUsername(event) {
-        console.debug(event.nativeEvent);
-        setState({username: event.target.value,});
-    }
 
-    function App(){
-        return (
-            <div>
-                <p>
-                    There have been {state.eventCount} events
-                </p>
-                <p>
-                    <button onClick={
-                       increment
-                    } >👽</button>
-                </p>
-
-                <span>
-                    you typed: {state.username}
-                </span>
-                <input onChange={updateUsername} type="text" />
-            </div>
-        )
-    }
-
-    setState({eventCount: 0, username: 'Biba'});
-
-    function setState(newState) {
-        Object.assign(state, newState);
-        renderApp();
-    }
-
-    function renderApp() {
         ReactDOM.render(
-            <App />
+            <StopWatch  />
             , rootElement);
-    }
+
 
 
 
