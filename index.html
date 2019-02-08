@@ -30,34 +30,26 @@
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    class Tilt extends React.Component{
+    class NameForm extends React.Component {
+        handleSubmit = (e) => {
+            e.preventDefault();
+            console.debug(this.inputNode.value)
+        };
 
-        componentDidMount() {
-            VanillaTilt.init(this.rootNode);
-            console.info(this.rootNode);
-        }
-
-        render() {
+        render () {
             return (
-                <div ref={node => (this.rootNode = node)} className="tilt-root">
-                    <div className="tilt-child" >
-                        <div {...this.props} />
-                    </div>
-                </div>
+                <form onSubmit={this.handleSubmit}>
+                    <label >Name</label>
+                    <input type="text" name="username" ref={ node => this.inputNode = node}
+                           placeholder="Bob Marley"/>
+                    <button type="submit">Go</button>
+                </form>
             )
         }
     }
-    const element = (
-        <div className="centered">
-            <Tilt>
-                <div data-tilt className="tilted">tilting</div>
-            </Tilt>
-        </div>
-    );
-
 
     ReactDOM.render(
-        element
+        <NameForm></NameForm>
         , rootElement);
 
 
