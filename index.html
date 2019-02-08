@@ -33,14 +33,18 @@
                     this.interval = setInterval(() => {
                         this.setState({
                             lapse:  Date.now() - startTime,
-                        })})
+                        }, () => {console.debug(this.state.lapse)}
+                        )})
                 }
 
                 return {running: !state.running}
             });
-
-
         };
+
+         componentWillUnmount() {
+             clearInterval(this.timer)
+         }
+
         clearClick = (e) => {
             clearInterval(this.interval);
             this.setState({
@@ -58,6 +62,7 @@
                 width: 70,
                 height: 24
             };
+
             const labelStyles = {
                 fontWeight: '600',
                 fontSize: 24,
