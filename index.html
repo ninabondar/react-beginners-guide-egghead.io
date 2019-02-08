@@ -17,75 +17,30 @@
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    class StopWatch extends React.Component{
+    class Counter extends React.Component{
+        constructor(...args) {
+            super(...args);
+        }
+        state = {count: 0};
 
-        state = {
-            lapse: 0,
-            running: false
-        };
-
-         handleRunClick = (e) => {
-            this.setState( state => {
-                if(state.running) {
-                    clearInterval(this.interval)
-                } else {
-                    const startTime =  Date.now() - this.state.lapse;
-                    this.interval = setInterval(() => {
-                        this.setState({
-                            lapse:  Date.now() - startTime,
-                        }, () => {console.debug(this.state.lapse)}
-                        )})
-                }
-
-                return {running: !state.running}
-            });
-        };
-
-         componentWillUnmount() {
-             clearInterval(this.timer)
-         }
-
-        clearClick = (e) => {
-            clearInterval(this.interval);
-            this.setState({
-                lapse: 0,
-                running: false
-            })
+        handleClick  = () => {
+            this.setState(({count}) =>  ({
+                count: count + 1,
+            }))
         };
 
         render() {
-            const btnStyles = {
-                background: '#90c564',
-                color: 'white',
-                display: 'block',
-                outline: 'none',
-                width: 70,
-                height: 24
-            };
-
-            const labelStyles = {
-                fontWeight: '600',
-                fontSize: 24,
-                fontFamily: 'sans-serif'
-            };
-
-            const {lapse, running} = this.state;
-
             return (
-                <div>
-                    <label style={labelStyles}>{lapse} ms</label>
-                    <button onClick={this.handleRunClick} style={btnStyles}>{running ? 'stop' : 'start'}</button>
-                    <button onClick={this.clearClick} style={btnStyles}>Clear</button>
-                </div>
+                <button onClick={this.handleClick}>{this.state.count}</button>
             )
         }
 
     }
 
 
-        ReactDOM.render(
-            <StopWatch  />
-            , rootElement);
+    ReactDOM.render(
+        <Counter  />
+        , rootElement);
 
 
 
