@@ -31,25 +31,64 @@
     const rootElement = document.getElementById("root");
 
     class NameForm extends React.Component {
-        handleSubmit = (e) => {
+        state = {
+            error: this.props.getErrorMessage(''),
+        };
+
+        handleSubmit = e => {
             e.preventDefault();
-            console.debug(this.inputNode.value)
+            const value = this.inputNode.value;
+            const error = this.props.getErrorMessage(
+                value
+            );
+
+            if(error){
+                alert(error);
+            } else {
+                alert(`success: ${value}`)
+            }
+        };
+
+        handleChange = e => {
+            const {value} = event.target;
+            this.setState({
+                error: this.props.getErrorMessage(value)
+            })
         };
 
         render () {
+            const {error} = this.state;
             return (
                 <form onSubmit={this.handleSubmit}>
-                    <label >Name</label>
-                    <input type="text" name="username" ref={ node => this.inputNode = node}
+                    <label >Name:</label>
+                    {error ?
+                        <div style={{color: 'red'}}>{error}</div>
+                            : true}
+                    <input type="text" name="username"
+                           onChange={this.handleChange}
+                           ref={ node => this.inputNode = node}
                            placeholder="Bob Marley"/>
-                    <button type="submit">Go</button>
+                    <button disabled={Boolean(error)} type="submit">
+                        Go
+                    </button>
                 </form>
             )
         }
     }
 
     ReactDOM.render(
-        <NameForm></NameForm>
+        <NameForm getErrorMessage={
+            value => {
+                if(value.length < 2){
+                    return `Value must be at least 2 symbols`
+                }
+                if(!value.includes('s')){
+                    return `You need to include 's'`
+                }
+                return null
+            }
+        }
+        />
         , rootElement);
 
 
