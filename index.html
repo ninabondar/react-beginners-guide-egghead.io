@@ -11,7 +11,9 @@
 <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.2/prop-types.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.6.1/vanilla-tilt.babel.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+
 <style>
     .centered {
         margin: auto;
@@ -27,67 +29,59 @@
         margin: auto;
     }
 </style>
+
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    class App extends React.Component {
-        state = {
-            items: []
-        };
+    class UserCompany extends React.Component {
 
-        static allItems = [
-            {id: 'a', value: 'apple'},
-            {id: 'c', value: 'cherry'},
-            {id: 'p', value: 'pear'},
-        ];
+        state = {company: undefined,
+        loaded: false}
 
-        addItem = () => {
-            this.setState(({items}) => ({
-                items: [
-                    ...items,
-                    App.allItems.find(
-                        i => !items.includes(i),
-                    )
-                ]
-            }))
-        };
-
-        removeItem = item => {
-            this.setState(({items}) => ({
-                items: items.filter(i => i !== item)
-            }
-            ))
-        };
-
-        render () {
-            const {items} = this.state;
-
-            return (
-                <div>
-                    <button disabled={items.length >=
-                    App.allItems.length}
-                    onClick={this.addItem}>
-                        +
-                    </button>
-
-                    {items.map((i, index) => (
-                        <div key={i.id}>
-                            <button
-                                onClick={
-                                    (e) => {this.removeItem(i)}
-                                }
-                            > -
-                            </button>
-                        {i.value}: <input />
-                        </div>
-                    ))}
-                </div>
+        componentDidMount() {
+            axios({
+                url: 'https://api.github.com/graphql',
+                method: 'post',
+                data: {
+                    query: `{
+                    user(login: "${this.props.username}") {
+                        company
+                    }
+                    }`
+                },
+                headers: {Authorization: `bearer 79de438074ce5671116a1b7eefdc99d25ccd93a8`}
+            }).then(
+                res => (
+                    this.setState({
+                        company: res.data.data.user.company,
+                        loaded: true
+                    })
+                ), error => {
+                    this.setState({
+                        error,
+                        loaded: true
+                    })
+                }
             )
         }
+
+        render (){
+            return this.state.loaded ? this.state.company || 'unknown' : '...';
+        }
     }
+        const username = 'gaearon';
+        const element = (
+            <div>
+                <div>
+                    {`@${username} works at `}
+                    <UserCompany username={username}></UserCompany>
+                </div>
+            </div>
+        );
+
 
     ReactDOM.render(
-        <App />
+        element
         , rootElement)
 
 
