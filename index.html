@@ -30,86 +30,64 @@
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    class MyFancyForm extends React.Component {
-        static availableOptions = [
-            'apple',
-            'cherry',
-            'peach'
+    class App extends React.Component {
+        state = {
+            items: []
+        };
+
+        static allItems = [
+            {id: 'a', value: 'apple'},
+            {id: 'c', value: 'cherry'},
+            {id: 'p', value: 'pear'},
         ];
 
-        state ={
-            multiline: '',
-            commaseparated: '',
-            multiselect: []
+        addItem = () => {
+            this.setState(({items}) => ({
+                items: [
+                    ...items,
+                    App.allItems.find(
+                        i => !items.includes(i),
+                    )
+                ]
+            }))
         };
 
-        handleCommaSeparatedChange = e => {
-            const {value} = e.target;
-            const allVals  = value.split(',').map(value => value.trim()).filter(Boolean);
-
-            this.setState({
-                commaseparated: value,
-                multiline: allVals.join('\n'),
-                multiselect: allVals.filter(v => MyFancyForm.availableOptions.includes(v))
-            })
-        };
-
-        handleMultilineChange = e => {
-            const {value} = e.target;
-            const allVals = value.split('\n').map(el => el.trim()).filter(Boolean);
-            this.setState({
-                multiline: value,
-                commaseparated: allVals.join(','),
-                multiselect: allVals.filter(v => MyFancyForm.availableOptions.includes(v))
-            })
-        };
-
-
-        handleMultiselectChange = e => {
-            console.log(e.target.selectedOptions);
-            const allVals = Array.from(e.target.selectedOptions).map(
-                o => o.value);
-
-            this.setState({
-                multiselect: allVals,
-                multiline: allVals.join('\n'),
-                commaseparated: allVals.join(',')
-            })
+        removeItem = item => {
+            this.setState(({items}) => ({
+                items: items.filter(i => i !== item)
+            }
+            ))
         };
 
         render () {
+            const {items} = this.state;
 
-            const {multiline, commaseparated, multiselect} = this.state;
             return (
-                <form >
-                    <div>
-                        <input type="text" value={commaseparated}
-                               onChange={this.handleCommaSeparatedChange}/><br/>
+                <div>
+                    <button disabled={items.length >=
+                    App.allItems.length}
+                    onClick={this.addItem}>
+                        +
+                    </button>
 
-                        <textarea value={multiline}
-                                  onChange={this.handleMultilineChange} /><br/>
-
-                        <select multiple size={MyFancyForm.availableOptions.length}
-                            onChange={this.handleMultiselectChange}
-                            value={multiselect}>
-                            {
-                                MyFancyForm.availableOptions.map(
-                                    opt => (
-                                        <option value={opt} key={opt}>
-                                            {opt}
-                                        </option>
-                                    )
-                                )
-                            }
-                        </select>
-                    </div>
-                </form>
+                    {items.map((i, index) => (
+                        <div key={i.id}>
+                            <button
+                                onClick={
+                                    (e) => {this.removeItem(i)}
+                                }
+                            > -
+                            </button>
+                        {i.value}: <input />
+                        </div>
+                    ))}
+                </div>
             )
         }
     }
 
     ReactDOM.render(
-        <MyFancyForm />
+        <App />
         , rootElement)
 
 
