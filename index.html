@@ -30,66 +30,87 @@
 <script type="text/babel">
     const rootElement = document.getElementById("root");
 
-    class NameForm extends React.Component {
-        state = {
-            error: this.props.getErrorMessage(''),
+    class MyFancyForm extends React.Component {
+        static availableOptions = [
+            'apple',
+            'cherry',
+            'peach'
+        ];
+
+        state ={
+            multiline: '',
+            commaseparated: '',
+            multiselect: []
         };
 
-        handleSubmit = e => {
-            e.preventDefault();
-            const value = this.inputNode.value;
-            const error = this.props.getErrorMessage(
-                value
-            );
+        handleCommaSeparatedChange = e => {
+            const {value} = e.target;
+            const allVals  = value.split(',').map(value => value.trim()).filter(Boolean);
 
-            if(error){
-                alert(error);
-            } else {
-                alert(`success: ${value}`)
-            }
-        };
-
-        handleChange = e => {
-            const {value} = event.target;
             this.setState({
-                error: this.props.getErrorMessage(value)
+                commaseparated: value,
+                multiline: allVals.join('\n'),
+                multiselect: allVals.filter(v => MyFancyForm.availableOptions.includes(v))
+            })
+        };
+
+        handleMultilineChange = e => {
+            const {value} = e.target;
+            const allVals = value.split('\n').map(el => el.trim()).filter(Boolean);
+            this.setState({
+                multiline: value,
+                commaseparated: allVals.join(','),
+                multiselect: allVals.filter(v => MyFancyForm.availableOptions.includes(v))
+            })
+        };
+
+
+        handleMultiselectChange = e => {
+            console.log(e.target.selectedOptions);
+            const allVals = Array.from(e.target.selectedOptions).map(
+                o => o.value);
+
+            this.setState({
+                multiselect: allVals,
+                multiline: allVals.join('\n'),
+                commaseparated: allVals.join(',')
             })
         };
 
         render () {
-            const {error} = this.state;
+
+            const {multiline, commaseparated, multiselect} = this.state;
             return (
-                <form onSubmit={this.handleSubmit}>
-                    <label >Name:</label>
-                    {error ?
-                        <div style={{color: 'red'}}>{error}</div>
-                            : true}
-                    <input type="text" name="username"
-                           onChange={this.handleChange}
-                           ref={ node => this.inputNode = node}
-                           placeholder="Bob Marley"/>
-                    <button disabled={Boolean(error)} type="submit">
-                        Go
-                    </button>
+                <form >
+                    <div>
+                        <input type="text" value={commaseparated}
+                               onChange={this.handleCommaSeparatedChange}/><br/>
+
+                        <textarea value={multiline}
+                                  onChange={this.handleMultilineChange} /><br/>
+
+                        <select multiple size={MyFancyForm.availableOptions.length}
+                            onChange={this.handleMultiselectChange}
+                            value={multiselect}>
+                            {
+                                MyFancyForm.availableOptions.map(
+                                    opt => (
+                                        <option value={opt} key={opt}>
+                                            {opt}
+                                        </option>
+                                    )
+                                )
+                            }
+                        </select>
+                    </div>
                 </form>
             )
         }
     }
 
     ReactDOM.render(
-        <NameForm getErrorMessage={
-            value => {
-                if(value.length < 2){
-                    return `Value must be at least 2 symbols`
-                }
-                if(!value.includes('s')){
-                    return `You need to include 's'`
-                }
-                return null
-            }
-        }
-        />
-        , rootElement);
+        <MyFancyForm />
+        , rootElement)
 
 
 
